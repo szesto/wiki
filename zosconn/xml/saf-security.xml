@@ -1,0 +1,42 @@
+<?xml version="1.0"?>
+<server>
+    <featureManager>
+        <feature>appSecurity-2.0</feature>
+        <feature>zosSecurity-1.0</feature>
+    </featureManager>
+
+    <!--
+        requireAuth - if true, authorization check is performed to ensure that authenticated 
+            user id is assigned to the zosConnectAccess role.
+
+        authorization interceptors - check if a user is a member of user registry group
+            and group is assigned appropriate authorization level.
+    -->
+    <zosconnect_zosConnectManager requireAuth="true"/>
+
+    <!--webAppSecurity allowFailOverToBasicAuth="true" /-->
+    <webAppSecurity overrideHttpAuthMethod="BASIC"/>
+
+    <!-- use saf registry for authentication -->
+    <safRegistry id="saf" />
+
+    <!--
+        Check if user is assigned to the zosConnectAccess role.
+        Check for the user id READ access to the RACF EJBROLE profile
+        <profilePrefix>.zos.connect.access.roles.zosConnectAccess
+        For <profilePrefix> see safCredentials element.
+
+        racRouteLog - display saf messages for unauthorized access
+    -->
+    <safAuthorization id="saf-authorization" racRouteLog="ASIS" />
+
+    <!-- 
+        unauthenticatedUser - RACF user id that plays a role of unauthenticated user. 
+            Default value is "WSGUEST".
+
+        profilePrefix - RACF APPL profile name. Default value is "BBGZDFLT".
+            All RACF user ids (to be authenticated and unauthenticated) are granted READ access to this profile. 
+            z/OS CEE server id is granted READ access to the RACF SERVER profile BBG.SECPFX.<profilePrefix>.
+    -->
+    <safCredentials unauthenticatedUser="WSGUEST" profilePrefix="BBGZDFLT"/>
+</server>

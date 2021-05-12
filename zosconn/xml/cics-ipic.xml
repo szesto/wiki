@@ -1,0 +1,67 @@
+<?xml version="1.0"?>
+<server>
+    <featureManager>
+        <feature>zosconnect:cicsService-1.0</feature>
+    </featureManager>
+
+    <!-- 
+        id - match the value that is specified for the connectionRef build toolkit property 
+            that is used to generate the .sar files that use this connection with the CICS 
+            service provider
+
+        host - host cics region is running on
+
+        port - match the port number of a TCPIPSERVICE definition in the CICS region 
+                that is configured with the PROTOCOL parameter set to IPIC 
+
+        sendSessions - maximum number of simultaneous requests over the connection.
+            The actual number of send sessions established depends on the value of sendSessions 
+            and the value in the RECEIVECOUNT parameter of the IPCONN definition in the CICS region.
+
+        cicsApplid - if this value matches Applid attribute of the IPCONN definition then it is used
+            Otherwise the connection is auto installed. 
+
+        cicsNetworkid - if this value matches Networkid attribute of the IPCONN definition
+            then it is used. Otherwise the connection is auto installed. Default: 9UNKNOWN
+
+        transid - A CICS transaction name; the transidUsage parameter specifies how the value is used.
+
+        transidUsage - EIB_ONLY/EIB_AND_MIRROR
+            EIB_ONLY - The transid parameter specifies the name of the CICS transaction that appears in the CICS 
+            exec interface block (EIB); the EIBTRNID field contains the value of the transid parameter. 
+            The called CICS program runs under the default mirror transaction CSMI.
+
+            EIB_AND_MIRROR - The transid parameter specifies the name of the CICS transaction under which 
+            the called CICS program runs. The transaction must be defined in the CICS region, and the transaction 
+            definition must specify the mirror program, DFHMIRS. The value specified by the transid parameter 
+            is available to the called CICS program for querying the transaction ID. The value of the transid 
+            parameter also appears in the EIBTRNID field of the CICS EIB. 
+
+            Note that this values can be overwritten in .sar, zosconnect_services, an active rule that modifies
+            transaction code.
+
+        sslCertsRef -  Reference to an SSL repertoire with an ID, a defined keystore and truststore, 
+            or an SSL Default repertoire.
+    -->
+    <zosconnect_cicsIpicConnection id="cicsipic" 
+        host="9.1.2.345" port="1110" sendSessions="100"
+        cicsApplid="applid" cicsNetworkid="netid" 
+        transid="HELO" transidUsage="EIB_AND_MIRROR"
+        sslCertsRef="ipicssl"/>
+
+    <!-- remove sslCertRef and these elements if SSL is not enabled -->
+    <ssl id="ipicssl" 
+        keyStoreRef = "ipicKeyringKeyStore"
+        trustStoreRef = "ipicKeyringKeyStore"
+        clientAuthentication = "true"
+    />
+
+    <keyStore id="ipicKeyringKeyStore"
+        location="safkeyring:///Keyring.ZOSCONN"
+        password="notused" 
+        type="JCERACFKS"
+        fileBased="false" 
+        readOnly="true">
+    </keyStore>
+
+</server>

@@ -1,0 +1,59 @@
+<?xml version="1.0"?>
+<server>
+    <featureManager>
+        <feature>zosconnect:zosConnect-2.0</feature>
+        <feature>transportSecurity-1.0</feature>
+    </featureManager>
+
+    <!--
+        requireSecrure - If true, require that requests are sent over HTTPS.
+    -->
+    <zosconnect_zosConnectManager requireSecure="true"/>
+
+    <!--
+        host - IP address, domain name server (DNS) host name with domain name suffix, 
+            or just the DNS host name, used by a client to request a resource. 
+            Use '*' for all available network interfaces.
+
+        httpsPort - port for client HTTPS connections
+    -->
+    <httpEndpoint id="defaultHttpEndpoint" enabled="true" host="*" httpsPort="443">
+        <!-- 
+            sslRef - ssl configuration reference
+            sslSessionTimeout - Amount of time to wait for a read or write request to complete on a socket. 
+        -->
+        <sslOptions sslRef="safSSLConfig" sslSessionTimeout="86400s"/>
+    </httpEndpoint>
+
+    <!--
+        keyStoreRef - reference to a key store
+
+        clientAuthentication - Whether client authentication is enabled. 
+
+        SecurityLevel - The cipher suite group used by the SSL handshake. 
+            HIGH are 3DES and 128 bit and higher ciphers, 
+            MEDIUM are DES and 40 bit ciphers, 
+            LOW are ciphers without encryption.
+    -->
+    <ssl id="safSSLConfig"
+        keyStoreRef = "safkeyringKeyStore"
+        clientAuthentication="false"
+        securityLevel="HIGH"
+    />
+
+    <!--
+        location - point to RACF keyring.
+
+        password - password is required but not used.
+
+        type - keystore type
+    -->
+    <keyStore id="safkeyringKeyStore"
+        location="safkeyring:///Keyring.ZOSCONN"
+        password="notused" 
+        type="JCERACFKS"
+        fileBased="false" 
+        readOnly="true">
+    </keyStore>
+
+</server>
