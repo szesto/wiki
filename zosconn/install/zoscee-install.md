@@ -10,6 +10,26 @@ Create z/OS CEE server, Configure z/OS TLS connection, user authentication, and 
 
 #### Create z/OS CEE server.
 
+### CORS 
+- [Enable CORS](https://www.ibm.com/docs/en/zosconnect/3.0?topic=configuring-cors)
+
+
+    <cors id="defaultCORSConfig"
+      domain="/"
+      allowedOrigins="*"
+      allowedMethods="GET, POST, PUT, DELETE, OPTIONS"
+      allowedHeaders="Origin, Content-Type, Authorization, Cache-Control, Expires, Pragma"
+      allowCredentials="true"
+      maxAge="3600" />
+
+### Tracing
+- [Enable Tracing](https://www.ibm.com/docs/en/zosconnect/3.0?topic=problems-enabling-trace-in-zos-connect-ee)
+
+### Interceptors.
+- File system logger interceptor: log information about api and serivces to a file.
+- Audit interceptor: write SMF 123 records.
+- Authorization interceptor: controls access, Admin, Operations, Invoke, Reader levels.
+
 #### TLS configuration.
 
 - [API Provider Confidentiality and Integrity](https://www.ibm.com/docs/en/zosconnect/3.0?topic=resources-api-provider-confidentiality-integrity)
@@ -359,3 +379,6 @@ See *cics-ipic.xml* file for example configuration
       </zosconnect_authData>
 
     </server>
+
+#### MQ Service Provider.
+
