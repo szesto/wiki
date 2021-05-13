@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<server>
+    <featureManager>
+        <feature>zosconnect:zosconnect-2.0</feature>
+    </featureManager>
+
+    <!--
+    required for services created with .sar archives
+-->
+    <zosconnect_services>
+        <service name="mq1">
+            <!--
+
+            connectionFactory
+            destination
+            expiry
+            mqmdFormat
+            password
+            persistence
+            replyDestination
+            replySelection
+            selector
+            useCallerPrincipal = true - enable identity propogation
+            userName - user name for authentication, otherwise use connection factory user.
+            waitInterval
+
+            -->
+            <property name="connectionFactory" value="jms/ConnectionFactory1"/>
+        </service>
+    </zosconnect_services>
+</server>

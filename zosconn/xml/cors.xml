@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<server>
+    <!--
+        enable cors
+    -->
+    <cors id="defaultCORSConfig"
+          domain="/"
+          allowedOrigins="*"
+          allowedMethods="GET, POST, PUT, DELETE, OPTIONS"
+          allowedHeaders="Origin, Content-Type, Authorization, Cache-Control, Expires, Pragma"
+          allowCredentials="true"
+          maxAge="3600" />
+</server>

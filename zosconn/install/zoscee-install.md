@@ -10,6 +10,27 @@ Create z/OS CEE server, Configure z/OS TLS connection, user authentication, and 
 
 #### Create z/OS CEE server.
 
+#### z/OS CEE server configuration.
+Z/OS CEE server is Liberty Profile Application Server and allows modular configuration.<br>
+
+Create configuration files for each subsystem and include them into main server.xml file.
+
+    <?xml version="1.0"?>
+    <server>
+      <featureManager>
+        <feature>zosconnect:zosConnect-2.0</feature>
+      </featureManager>
+
+      <include location="cors.xml"/>
+      <include location="http-tls.xml"/>
+      <include location="saf-security.xml"/>
+      <include location="cics-ipic.xml"/>
+      <include location="mq.xml"/>
+
+    </server>
+
+See server.xml file for example configuration.
+
 ### CORS 
 - [Enable CORS](https://www.ibm.com/docs/en/zosconnect/3.0?topic=configuring-cors)
 
@@ -21,6 +42,8 @@ Create z/OS CEE server, Configure z/OS TLS connection, user authentication, and 
       allowedHeaders="Origin, Content-Type, Authorization, Cache-Control, Expires, Pragma"
       allowCredentials="true"
       maxAge="3600" />
+
+see cors.xml file for example configuration.
 
 ### Tracing
 - [Enable Tracing](https://www.ibm.com/docs/en/zosconnect/3.0?topic=problems-enabling-trace-in-zos-connect-ee)
@@ -382,3 +405,44 @@ See *cics-ipic.xml* file for example configuration
 
 #### MQ Service Provider.
 
+[Using IBM MQ Service Provider](https://www.ibm.com/docs/en/zosconnect/3.0?topic=configuring-using-mq-service-provider)
+
+When creating MQ service project with the toolkit specify a list of values:
+- Connection factory JNDI name
+- Request destination JNDI name
+- Reply destination JNDI name
+- Wait interval
+
+These values can be overwritten with `zosconnect_services` service definition.
+
+see mq.xml configuration file for examples.
+
+    <?xml version="1.0" encoding="utf-8" ?>
+    <server>
+      <featureManager>
+        <feature>zosconnect:zosconnect-2.0</feature>
+      </featureManager>
+
+      <!--
+      required for services created with .sar archives
+      -->
+      <zosconnect_services>
+        <service name="mq1">
+          <!--
+            connectionFactory
+            destination
+            expiry
+            mqmdFormat
+            password
+            persistence
+            replyDestination
+            replySelection
+            selector
+            useCallerPrincipal = true - enable identity propogation
+            userName - user name for authentication, otherwise use connection factory user.
+            waitInterval
+            -->
+            <property name="connectionFactory" value="jms/ConnectionFactory1"/>
+        </service>
+      </zosconnect_services>
+    </server>
