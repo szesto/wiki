@@ -1,21 +1,47 @@
 <?xml version="1.0"?>
 <server>
     <featureManager>
+        <feature>zosconnect:zosconnect-2.0</feature>
         <feature>zosconnect:cicsService-1.0</feature>
     </featureManager>
 
-    <!-- 
-        id - match the value that is specified for the connectionRef build toolkit property 
-            that is used to generate the .sar files that use this connection with the CICS 
+    <!--
+        required for services created with .sar archives
+    -->
+    <zosconnect_services>
+        <service name="cics1">
+            <!-- transid - A CICS transaction name; the transidUsage parameter specifies how the value is used. -->
+            <property name="transid" value="HELO"/>
+            <!--
+            transidUsage - EIB_ONLY/EIB_AND_MIRROR
+            EIB_ONLY - The transid parameter specifies the name of the CICS transaction that appears in the CICS
+            exec interface block (EIB); the EIBTRNID field contains the value of the transid parameter.
+            The called CICS program runs under the default mirror transaction CSMI.
+
+            EIB_AND_MIRROR - The transid parameter specifies the name of the CICS transaction under which
+            the called CICS program runs. The transaction must be defined in the CICS region, and the transaction
+            definition must specify the mirror program, DFHMIRS. The value specified by the transid parameter
+            is available to the called CICS program for querying the transaction ID. The value of the transid
+            parameter also appears in the EIBTRNID field of the CICS EIB.
+
+            value set here overwrites zosconnect_cicsIpicConnection and service archive .sar file.
+            -->
+            <property name="transidUsage" value="EIB_AND_MIRROR"/>
+        </service>
+    </zosconnect_services>
+
+    <!--
+        id - match the value that is specified for the connectionRef build toolkit property
+            that is used to generate the .sar files that use this connection with the CICS
             service provider
 
         host - host cics region is running on
 
-        port - match the port number of a TCPIPSERVICE definition in the CICS region 
-                that is configured with the PROTOCOL parameter set to IPIC 
+        port - match the port number of a TCPIPSERVICE definition in the CICS region
+                that is configured with the PROTOCOL parameter set to IPIC
 
-        sendSessions - maximum number of simultaneous requests over the connection.
-            The actual number of send sessions established depends on the value of sendSessions 
+        sendSessions - maximum number of simultaneous requests (up to 999) over the connection.
+            The actual number of send sessi>ons established depends on the value of sendSessions
             and the value in the RECEIVECOUNT parameter of the IPCONN definition in the CICS region.
 
         cicsApplid - if this value matches Applid attribute of the IPCONN definition then it is used
@@ -42,12 +68,19 @@
 
         sslCertsRef -  Reference to an SSL repertoire with an ID, a defined keystore and truststore, 
             or an SSL Default repertoire.
+
+        authDataRef - basic auth data to be used for the connection if no creds are supplied
+            on the request.
     -->
     <zosconnect_cicsIpicConnection id="cicsipic" 
         host="9.1.2.345" port="1110" sendSessions="100"
         cicsApplid="applid" cicsNetworkid="netid" 
         transid="HELO" transidUsage="EIB_AND_MIRROR"
         sslCertsRef="ipicssl"/>
+    <!--
+        uncomment if identity propogation is required.
+        authDataRef="authdata"/>
+    -->
 
     <!-- remove sslCertRef and these elements if SSL is not enabled -->
     <ssl id="ipicssl" 
@@ -63,5 +96,14 @@
         fileBased="false" 
         readOnly="true">
     </keyStore>
+
+    <!--
+        user - if this element is referenced by the zosconnect_cicsIpicConnection element
+            this user will be propogated to the CICS region
+        password - encoded password.
+    -->
+    <zosconnect_authData id="authdata"
+        user="user" password="encoded">
+    </zosconnect_authData>
 
 </server>

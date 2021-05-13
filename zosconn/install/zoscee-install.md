@@ -187,3 +187,175 @@ See *saf-security.xml* file for example configuration.
         -->
         <safCredentials unauthenticatedUser="WSGUEST" profilePrefix="BBGZDFLT"/>
     </server>
+
+#### Configuring Services.
+
+- [IBM Doc](https://www.ibm.com/docs/en/zosconnect/3.0?topic=configuring-services)
+
+#### CICS service
+Services are defined with the `.sar` archives. The prefered way to build a service archive is to export it from the
+toolkit service project. Another way to build a service archive is to use built toolkit.<br>
+
+sar archives require `zosconnect_services` element.
+Note that we co-locate `zosconnect_services` element with the cics ipic configuration.
+
+    <!--
+        required for services created with .sar archives
+    -->
+    <zosconnect_services>
+        <service name="cics1">
+            <!-- transid - A CICS transaction name; the transidUsage parameter specifies how the value is used. -->
+            <property name="transid" value="HELO"/>
+            <!--
+            transidUsage - EIB_ONLY/EIB_AND_MIRROR
+            EIB_ONLY - The transid parameter specifies the name of the CICS transaction that appears in the CICS
+            exec interface block (EIB); the EIBTRNID field contains the value of the transid parameter.
+            The called CICS program runs under the default mirror transaction CSMI.
+
+            EIB_AND_MIRROR - The transid parameter specifies the name of the CICS transaction under which
+            the called CICS program runs. The transaction must be defined in the CICS region, and the transaction
+            definition must specify the mirror program, DFHMIRS. The value specified by the transid parameter
+            is available to the called CICS program for querying the transaction ID. The value of the transid
+            parameter also appears in the EIBTRNID field of the CICS EIB.
+
+            value set here overwrites zosconnect_cicsIpicConnection and service archive .sar file.
+            -->
+            <property name="transidUsage" value="EIB_AND_MIRROR"/>
+        </service>
+    </zosconnect_services>
+
+see `cics-ipic.xml` file for example configuration.
+
+#### CICS service provider 
+CICS service provider connects to CICS using IPIC connection.
+
+- Configure IPIC connection in CICS [IBM Doc](https://www.ibm.com/docs/en/zosconnect/3.0?topic=cics-configuring-ipic-connection-in)
+- Configure CICS TCPIPService
+- Create predefined or auto-installed IPCONN definition.
+- Configure SSL on IPIC connection. [IBM Doc](https://www.ibm.com/docs/en/zosconnect/3.0?topic=connection-configuring-ssl-ipic)
+
+> `IPCONN.APplid` is matched to `zosconnect_cicsIpicConnection.cicsApplid`.  
+> `IPCONN.Networkid` is matched to `zosconnect_cicsIpicConnection.cicsNetworkId`.  
+> `IPCONN.Userauth = Local|Defaultuser` - no identity propogation. CICS program runs under link id, or default id.  
+> `IPCONN.Userauth = Identify` - flow asserted saf userid.  
+> `IPCONN.Verify = identity` propogation required, zosconnect-authdata is referenced on ipic connection element.  
+
+IPIC SSL z/OS CEE.
+- If SSL is enabled, connect enterprise root CA cert to the z/os cee saf keyring. 
+- If client authentication is required create and sign personal certificate for z/os cee and connect it 
+to the z/os cee saf keyring. Export z/os cee cert from z/os cee saf keyring and connect it to the cics keyring.
+
+In the example configuration below z/os cee keystore is pointing to the saf keyring.
+ipicConnection refs ssl configuration and ssl configuration refs keystore.
+
+See *cics-ipic.xml* file for example configuration
+
+    <?xml version="1.0"?>
+    <server>
+      <featureManager>
+        <feature>zosconnect:zosconnect-2.0</feature>
+        <feature>zosconnect:cicsService-1.0</feature>
+      </featureManager>
+
+      <!--
+        required for services created with .sar archives
+      -->
+      <zosconnect_services>
+        <service name="cics1">
+            <!-- transid - A CICS transaction name; the transidUsage parameter specifies how the value is used. -->
+            <property name="transid" value="HELO"/>
+            <!--
+            transidUsage - EIB_ONLY/EIB_AND_MIRROR
+            EIB_ONLY - The transid parameter specifies the name of the CICS transaction that appears in the CICS
+            exec interface block (EIB); the EIBTRNID field contains the value of the transid parameter.
+            The called CICS program runs under the default mirror transaction CSMI.
+
+            EIB_AND_MIRROR - The transid parameter specifies the name of the CICS transaction under which
+            the called CICS program runs. The transaction must be defined in the CICS region, and the transaction
+            definition must specify the mirror program, DFHMIRS. The value specified by the transid parameter
+            is available to the called CICS program for querying the transaction ID. The value of the transid
+            parameter also appears in the EIBTRNID field of the CICS EIB.
+
+            value set here overwrites zosconnect_cicsIpicConnection and service archive .sar file.
+            -->
+            <property name="transidUsage" value="EIB_AND_MIRROR"/>
+        </service>
+      </zosconnect_services>
+
+      <!--
+        id - match the value that is specified for the connectionRef build toolkit property
+            that is used to generate the .sar files that use this connection with the CICS
+            service provider
+
+        host - host cics region is running on
+
+        port - match the port number of a TCPIPSERVICE definition in the CICS region
+                that is configured with the PROTOCOL parameter set to IPIC
+
+        sendSessions - maximum number of simultaneous requests (up to 999) over the connection.
+            The actual number of send sessi>ons established depends on the value of sendSessions
+            and the value in the RECEIVECOUNT parameter of the IPCONN definition in the CICS region.
+
+        cicsApplid - if this value matches Applid attribute of the IPCONN definition then it is used
+            Otherwise the connection is auto installed. 
+
+        cicsNetworkid - if this value matches Networkid attribute of the IPCONN definition
+            then it is used. Otherwise the connection is auto installed. Default: 9UNKNOWN
+
+        transid - A CICS transaction name; the transidUsage parameter specifies how the value is used.
+
+        transidUsage - EIB_ONLY/EIB_AND_MIRROR
+            EIB_ONLY - The transid parameter specifies the name of the CICS transaction that appears in the CICS 
+            exec interface block (EIB); the EIBTRNID field contains the value of the transid parameter. 
+            The called CICS program runs under the default mirror transaction CSMI.
+
+            EIB_AND_MIRROR - The transid parameter specifies the name of the CICS transaction under which 
+            the called CICS program runs. The transaction must be defined in the CICS region, and the transaction 
+            definition must specify the mirror program, DFHMIRS. The value specified by the transid parameter 
+            is available to the called CICS program for querying the transaction ID. The value of the transid 
+            parameter also appears in the EIBTRNID field of the CICS EIB. 
+
+            Note that this values can be overwritten in .sar, zosconnect_services, an active rule that modifies
+            transaction code.
+
+        sslCertsRef -  Reference to an SSL repertoire with an ID, a defined keystore and truststore, 
+            or an SSL Default repertoire.
+
+        authDataRef - basic auth data to be used for the connection if no creds are supplied
+            on the request.
+      -->
+      <zosconnect_cicsIpicConnection id="cicsipic" 
+        host="9.1.2.345" port="1110" sendSessions="100"
+        cicsApplid="applid" cicsNetworkid="netid" 
+        transid="HELO" transidUsage="EIB_AND_MIRROR"
+        sslCertsRef="ipicssl"/>
+      <!--
+        uncomment if identity propogation is required.
+        authDataRef="authdata"/>
+      -->
+
+      <!-- remove sslCertRef and these elements if SSL is not enabled -->
+      <ssl id="ipicssl" 
+        keyStoreRef = "ipicKeyringKeyStore"
+        trustStoreRef = "ipicKeyringKeyStore"
+        clientAuthentication = "true"
+      />
+
+      <keyStore id="ipicKeyringKeyStore"
+        location="safkeyring:///Keyring.ZOSCONN"
+        password="notused" 
+        type="JCERACFKS"
+        fileBased="false" 
+        readOnly="true">
+      </keyStore>
+
+      <!--
+        user - if this element is referenced by the zosconnect_cicsIpicConnection element
+            this user will be propogated to the CICS region
+        password - encoded password.
+      -->
+      <zosconnect_authData id="authdata"
+        user="user" password="encoded">
+      </zosconnect_authData>
+
+    </server>
