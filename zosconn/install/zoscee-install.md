@@ -10,7 +10,7 @@ user directories:
 ```
   +- /var/zosconnect               wlp.user.dir         User directory, default "/var/zosconnect"`, create this directory.
   |  +- v3r0/extensions                                 zoscee extentions directory, created with `zosconsetup install`
-  |  +- shared/<br/>
+  |  +- shared/
   |  |  +- jvm.options                                  Server JVM options (optional: merged with server specific jvm.options)
   |  |  +- server.env                                   Server script envrionment variables
   |  |  +- apps/                   shared.app.dir       Shared applications
