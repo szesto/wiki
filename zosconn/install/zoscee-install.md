@@ -1,14 +1,68 @@
 ### IBM z/OS Connect Enterprise Edition installation and configuration.
-z/OS CEE installation reference page is [IBM Documentation](https://www.ibm.com/docs/en/zosconnect/3.0?topic=installing)<br>
+[z/OS CEE install](https://www.ibm.com/docs/en/zosconnect/3.0?topic=installing)
 
-To install z/OS CEE create installation directory, update permissions and extract z/OS CEE tarball into installation directory.<br>
+Follow [Insalling z/OS CEE](https://www.ibm.com/docs/en/zosconnect/3.0?topic=installing-zos-connect-ee) subsection to install z/OS CEE.
 
-z/OS CEE configuration consits of z/OS configuration and server.xml file configuration for the Liberty Application Server.<br>
-Liberty Application server configuration is modular, each aspect is be configured in it's on configuration file and then included in the main configuration file server.xml.<br>
+- Create shared directory [IBM Doc](https://www.ibm.com/docs/en/zosconnect/3.0?topic=ee-creating-shared-directory)
+- Setup product extensions directory [IBM Doc](https://www.ibm.com/docs/en/zosconnect/3.0?topic=ee-creating-shared-directory)
 
-Create z/OS CEE server, Configure z/OS TLS connection, user authentication, and services for specific subsystems (CICS, MQ, DB2).
+user directories:
+```
+  +- /var/zosconnect               wlp.user.dir         User directory, default "/var/zosconnect"`, create this directory.
+  |  +- v3r0/extensions                                 zoscee extensions directory, created with `zosconsetup install`
+  |  +- shared/<br/>
+  |  |  +- jvm.options                                  Server JVM options (optional: merged with server specific jvm.options)
+  |  |  +- server.env                                   Server script envrionment variables
+  |  |  +- apps/                   shared.app.dir       Shared applications
+  |  |  +- config/                 shared.config.dir    Shared server configuration files
+  |  |  +- resources/              shared.resource.dir  Shared resource definitions: adapters, data sources
+  |  +- servers/
+  |  |  +- <serverName>         ** server.config.dir    Server configuration directory
+  |  |  |                          wlp.server.name      The name of the server is the directory name
+  |  |  |  +- bootstrap.properties                      Server bootstrap properties (optional)
+  |  |  |  +- jvm.options                               Server JVM options (optional: replaces wlp/etc/jvm.options)
+  |  |  |  +- server.env                                Server script environment variables
+  |  |  |  +- server.xml                                Server configuration file (required)
+  |  |  |  +- apps/                                     Server's configured applications directory
+  |  |  |  |  +- <application.type>                     Application directory or archive
+  |  |  |  +- dropins                                   Server's default application dropins directory
+  |  |  |  |  +- <application.type>                     Application directory or archive
+  |  |  +- <serverName>         ** server.output.dir    Server output directory: logs and workarea
+  |  |  |  +- logs                                      Server's logs directory (including FFDC logs)
+  |  |  |  |  +- state                                  Files that contain information about the runtime state
+  |  |  |  +- workarea                                  Server's workarea directory
+```
+
+installation directories:
+```
+  /usr/lpp/IBM/zosconnect/v3r0/    wlp.install.dir      Root of WebSphere Liberty installation
+  +- bin/                                               Liberty scripts, "zonsonsetup", "server", etc
+  +- clients/                                           Liberty client and thin client libraries
+  +- dev/                                               Root for developer resources (APIs, SPIs, specifications, and tools)
+  +- etc/                                               User customizations (optional: settings apply to all servers)
+  |  +- server.env                                      Default server script environment variables (optional)
+  |  +- jvm.options                                     Default JVM options (optional)
+  +- lib/                                               Platform runtime (internal)
+  +- templates/                                         Runtime customization templates and examples
+  |  +- servers/                                        Server configuration templates
+  +- wlp/etc/extensions	                                Symlink to "/var/zosconnect/v3r0/extensions"
+```
 
 #### Create z/OS CEE server.
+[IBM Doc](https://www.ibm.com/docs/en/zosconnect/3.0?topic=configuring-creating-zos-connect-ee-server)
+
+Create zoscee server.<br/>
+```
+WLP_INSTALL_DIR=/usr/lpp/IBM/zosconnect/v3r0
+WLP_USER_DIR=/var/zosconnect
+$WLP_INSTALL_DIR/bin/zosconnect create server1 --template=zosconnect:default
+Server created in $WLP_USER_DIR/servers/server1
+```
+
+### Start z/OS CEE server.
+[Starting and Stopping z/OS CEE](https://www.ibm.com/docs/en/zosconnect/3.0?topic=operating-starting-stopping-zos-connect-ee)
+
+Setup a started task to run z/OS CEE.
 
 #### z/OS CEE server configuration.
 Z/OS CEE server is Liberty Profile Application Server and allows modular configuration.<br>
@@ -44,14 +98,6 @@ See server.xml file for example configuration.
       maxAge="3600" />
 
 see cors.xml file for example configuration.
-
-### Tracing
-- [Enable Tracing](https://www.ibm.com/docs/en/zosconnect/3.0?topic=problems-enabling-trace-in-zos-connect-ee)
-
-### Interceptors.
-- File system logger interceptor: log information about api and serivces to a file.
-- Audit interceptor: write SMF 123 records.
-- Authorization interceptor: controls access, Admin, Operations, Invoke, Reader levels.
 
 #### TLS configuration.
 
