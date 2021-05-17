@@ -9,7 +9,7 @@ Follow [Insalling z/OS CEE](https://www.ibm.com/docs/en/zosconnect/3.0?topic=ins
 user directories:
 ```
   +- /var/zosconnect               wlp.user.dir         User directory, default "/var/zosconnect"`, create this directory.
-  |  +- v3r0/extensions                                 zoscee extensions directory, created with `zosconsetup install`
+  |  +- v3r0/extensions                                 zoscee extentions directory, created with `zosconsetup install`
   |  +- shared/<br/>
   |  |  +- jvm.options                                  Server JVM options (optional: merged with server specific jvm.options)
   |  |  +- server.env                                   Server script envrionment variables
