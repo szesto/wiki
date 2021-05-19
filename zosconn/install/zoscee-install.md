@@ -8,10 +8,10 @@ Follow [Insalling z/OS CEE](https://www.ibm.com/docs/en/zosconnect/3.0?topic=ins
 
 user directories:
 ```
-  +- /var/zosconnect               wlp.user.dir         User directory, default "/var/zosconnect"`, create this directory.
-  |  +- v3r0/extensions                                 zoscee extentions directory, created with `zosconsetup install`
+  +- /var/zosconnect               wlp.user.dir         User directory, default "/var/zosconnect", create this directory.
+  |  +- v3r0/extensions                                 zoscee extentions directory, created with "zosconsetup install"
   |  +- shared/
-  |  |  +- jvm.options                                  Server JVM options (optional: merged with server specific jvm.options)
+  |  |  +- jvm.options                                  Server JVM options
   |  |  +- server.env                                   Server script envrionment variables
   |  |  +- apps/                   shared.app.dir       Shared applications
   |  |  +- config/                 shared.config.dir    Shared server configuration files
