@@ -492,3 +492,33 @@ see mq.xml configuration file for examples.
         </service>
       </zosconnect_services>
     </server>
+
+
+#### Db2 Services ####
+[IBM Doc](https://www.ibm.com/docs/en/zosconnect/3.0?topic=configuring-using-db2-services)
+
+
+    <?xml version="1.0" encoding="utf-8" ?>
+    <server>
+      <featureManager>
+        <feature>zosconnect:mqService-1.0</feature>
+      </featureManager>
+
+      <!--
+      required for services created with .sar archives
+      -->
+      <zosconnect_services>
+        <service name="db2">
+            <property name="collectionId" value="coll1"/>
+            <propogation name="connectionRef" value="conn1"/>
+        </service>
+      </zosconnect_services>
+
+      <!-- todo: comments -->
+      <zosconnect_zosConnectServiceRestClientConnection id="db2Conn" 
+        host="db2.example.com" port="8080" sslCertsRef="db2ssl" basicAuthRef="db2basicauth"/>
+
+      <!-- basic auth -->
+      <zosconnect_zosConnectServiceRestClientBasicAuth id="authABC" 
+        userName="SYSUSER" password="{xor}OjIvbi8oMzs="/>
+    </server>

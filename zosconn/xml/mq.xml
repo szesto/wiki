@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <server>
     <featureManager>
-        <feature>zosconnect:zosconnect-2.0</feature>
+        <feature>zosconnect:mqService-1.0</feature>
     </featureManager>
 
     <!--
     required for services created with .sar archives
--->
+    -->
     <zosconnect_services>
         <service name="mq1">
             <!--
@@ -28,4 +28,12 @@
             <property name="connectionFactory" value="jms/ConnectionFactory1"/>
         </service>
     </zosconnect_services>
+
+    <jmsConnectionFactory>
+        <properties.wmqJMS>
+        </properties.wmqJMS>
+    </jmsConnectionFactory>
+
+    <jmsQueue>
+    </jmsQueue>
 </server>
