@@ -88,14 +88,13 @@ See server.xml file for example configuration.
 ### CORS 
 - [Enable CORS](https://www.ibm.com/docs/en/zosconnect/3.0?topic=configuring-cors)
 
-
-    <cors id="defaultCORSConfig"
-      domain="/"
-      allowedOrigins="*"
-      allowedMethods="GET, POST, PUT, DELETE, OPTIONS"
-      allowedHeaders="Origin, Content-Type, Authorization, Cache-Control, Expires, Pragma"
-      allowCredentials="true"
-      maxAge="3600" />
+      <cors id="defaultCORSConfig"
+        domain="/"
+        allowedOrigins="*"
+        allowedMethods="GET, POST, PUT, DELETE, OPTIONS"
+        allowedHeaders="Origin, Content-Type, Authorization, Cache-Control, Expires, Pragma"
+        allowCredentials="true"
+        maxAge="3600" />
 
 see cors.xml file for example configuration.
 
