@@ -175,11 +175,14 @@ See *http-tls.xml* file for example configuration.
             HIGH are 3DES and 128 bit and higher ciphers, 
             MEDIUM are DES and 40 bit ciphers, 
             LOW are ciphers without encryption.
+
+        sslProtocol - ssl handshake protocol.
         -->
         <ssl id="safSSLConfig"
             keyStoreRef = "safkeyringKeyStore"
             clientAuthentication="false"
             securityLevel="HIGH"
+            sslProtocol="TLSv1.2"
         />
 
         <!--
